@@ -7,3 +7,5 @@ S
 #tests/producer-verification.test.ts,b/9/b93ddf9a8533cd1526a8d66eb48db6d7137cf588
 P
  contracts/consumer-identity.clar,0/b/0b6d7a97250993d1ddc0697ec386c4f899018ff0
+R
+"contracts/production-tracking.clar,0/b/0b416c10fdeb82c08aa0dfc8172b54f6b1e5b7c2

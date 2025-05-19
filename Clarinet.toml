@@ -14,6 +14,11 @@ epoch = 2.5
 path = 'contracts/producer-verification.clar'
 clarity_version = 2
 epoch = 2.5
+
+[contracts.production-tracking]
+path = 'contracts/production-tracking.clar'
+clarity_version = 2
+epoch = 2.5
 [repl.analysis]
 passes = ['check_checker']
 
