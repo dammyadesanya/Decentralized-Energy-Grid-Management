@@ -1,62 +1,57 @@
-;; Producer Verification Contract
-;; Validates energy generators on the grid
+;; Distribution Contract
+;; Manages allocation of energy to consumers
 
 (define-data-var admin principal tx-sender)
 
-;; Map to store verified producers
-(define-map verified-producers principal
-  {
-    name: (string-utf8 100),
-    capacity: uint,
-    location: (string-utf8 100),
-    verified: bool
-  }
+;; Map to store energy allocations by consumer and timestamp
+(define-map energy-allocations
+  { consumer: principal, timestamp: uint }
+  { amount: uint, producer: principal }
 )
 
-;; Public function to register a new producer (only admin can verify)
-(define-public (register-producer (name (string-utf8 100)) (capacity uint) (location (string-utf8 100)))
-  (begin
-    (asserts! (is-eq tx-sender (var-get admin)) (err u1))
-    (ok (map-set verified-producers tx-sender
-      {
-        name: name,
-        capacity: capacity,
-        location: location,
-        verified: false
-      }
-    ))
-  )
-)
+;; Map to track total consumption by consumer
+(define-map total-consumption principal uint)
 
-;; Public function to verify a producer
-(define-public (verify-producer (producer principal))
-  (begin
-    (asserts! (is-eq tx-sender (var-get admin)) (err u2))
-    (match (map-get? verified-producers producer)
-      producer-data (ok (map-set verified-producers producer
-                        (merge producer-data {verified: true})))
-      (err u3)
+;; Public function to allocate energy to a consumer
+(define-public (allocate-energy (consumer principal) (amount uint) (producer principal))
+  (let
+    (
+      (timestamp (get-block-info? time (- block-height u1)))
+      (current-total (default-to u0 (map-get? total-consumption consumer)))
+    )
+    (begin
+      (asserts! (is-eq tx-sender (var-get admin)) (err u1))
+      ;; We would typically verify the consumer and producer here
+      ;; by calling their respective contracts
+      (match timestamp
+        time-value (begin
+          (map-set energy-allocations
+            { consumer: consumer, timestamp: time-value }
+            { amount: amount, producer: producer }
+          )
+          (map-set total-consumption consumer (+ current-total amount))
+          (ok time-value)
+        )
+        (err u2)
+      )
     )
   )
 )
 
-;; Read-only function to check if a producer is verified
-(define-read-only (is-verified-producer (producer principal))
-  (match (map-get? verified-producers producer)
-    producer-data (get verified producer-data)
-    false
-  )
+;; Read-only function to get energy allocation
+(define-read-only (get-energy-allocation (consumer principal) (timestamp uint))
+  (map-get? energy-allocations { consumer: consumer, timestamp: timestamp })
 )
 
-;; Read-only function to get producer details
-(define-read-only (get-producer-details (producer principal))
-  (map-get? verified-producers producer)
+;; Read-only function to get total consumption for a consumer
+(define-read-only (get-total-consumption (consumer principal))
+  (default-to u0 (map-get? total-consumption consumer))
 )
 
 ;; Function to transfer admin rights
 (define-public (transfer-admin (new-admin principal))
   (begin
-    (asserts! (is-eq tx-sender (var-get admin)) (err u4))
+    (asserts! (is-eq tx-sender (var-get admin)) (err u3))
     (ok (var-set admin new-admin))
   )
 )

@@ -10,6 +10,11 @@ path = 'contracts/consumer-identity.clar'
 clarity_version = 2
 epoch = 2.5
 
+[contracts.distribution]
+path = 'contracts/distribution.clar'
+clarity_version = 2
+epoch = 2.5
+
 [contracts.producer-verification]
 path = 'contracts/producer-verification.clar'
 clarity_version = 2
