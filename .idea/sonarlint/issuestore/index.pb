@@ -5,3 +5,5 @@ T
 $contracts/producer-verification.clar,b/a/ba270fdc20b9306cd425b5cdfadfe60417ecc105
 S
 #tests/producer-verification.test.ts,b/9/b93ddf9a8533cd1526a8d66eb48db6d7137cf588
+P
+ contracts/consumer-identity.clar,0/b/0b6d7a97250993d1ddc0697ec386c4f899018ff0
